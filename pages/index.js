@@ -75,7 +75,7 @@ export default function Home() {
 
         <Widget>
           <Widget.Header>
-            <h1>Quiz MARVEL</h1>
+            <h1>QUIZ MARVEL : JavaScript</h1>
           </Widget.Header>
           <Widget.Content>
             <p>loren ipsun dolor sit amet...</p>

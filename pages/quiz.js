@@ -27,14 +27,16 @@ function LoadinWidget() {
 function QuestionWidget({
   question,
   questionIndex,
-  totalQuestions,
+  totalQuestion,
+  onSubmit,
 }) {
+  const questionId = `question__${questionIndex}`;
   return (
     <Widget>
       <Widget.Header>
             {/* <BackLinkArrow href="/" /> */}
             <h3>
-              {`Pergunta ${questionIndex + 1} de ${totalQuestions}`}
+              {`Perguntas ${questionIndex + 1} de ${totalQuestion}`}
             </h3>
           </Widget.Header>
 
@@ -55,31 +57,87 @@ function QuestionWidget({
               {question.description}
             </p>
 
-            <Button>
-              Confirmar
-            </Button>
+            <form
+              onSubmit={(infosDoEvento) => {
+                infosDoEvento.preventDefault();
+                onSubmit();
+              }}
+            >
+              {question.alternatives.map((alternative, alternativeIndex) => {
+                console.log('Para de reclamar um pouquinho só');
+                const alternativeId = `alternative__${alternativeIndex}`;
+
+                return (
+                  <Widget.Topic
+                    as="label"
+                    htmlFor={alternativeId}
+                  >
+                    <input
+                      id={alternativeId}
+                      name={questionId}
+                      type="radio"
+                    />
+                    {alternative}
+                  </Widget.Topic>
+                );
+              })}
+              {/* <pre>
+                {JSON.stringify(question, null, 4)}
+              </pre> */}
+
+              <Button type="submit">
+                Confirmar
+              </Button>
+            </form>
+
           </Widget.Content>
         </Widget>
   );
 }
 
+const screenStates = {
+  LOADING: 'LOADING',
+  QUIZ: 'QUIZ',
+  RESULT: 'RESULT',
+}
+
 export default function QuizPage() {
-  console.log('Perguntas criadas: ', db.questions);
-  const totalQuestions = db.questions.length;
-  const questionIndex = 1;
+  const [screenState, setScreenState] = React.useState(screenStates.LOADING);
+  const totalQuestion = db.questions.length;
+  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const questionIndex = currentQuestion;
   const question = db.questions[questionIndex];
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setScreenState(screenStates.QUIZ);
+    }, 1 * 1000);
+  }, []);
+
+  function handleSubmitQuiz() {
+    const nextQuestion = questionIndex + 1;
+    if (nextQuestion < totalQuestion) {
+      setCurrentQuestion(questionIndex + 1);
+    } else {
+      setScreenState(screenStates.RESULT);
+    }
+  }
 
   return (
     <QuizBackground backgruondImage={db.bg}>
       <QuizContainer>
         <QuizLogo />
 
+        {screenState === screenStates.QUIZ && (
           <QuestionWidget
             question={question}
             questionIndex={questionIndex}
-            totalQuestion={totalQuestions}
+            totalQuestion={totalQuestion}
+            onSubmit={handleSubmitQuiz}
           />
-        <LoadinWidget />
+        )}
+        {screenState === screenStates.LOADING && <LoadinWidget />}
+        {screenState === screenStates.RESULT && <div>Você acertou x questões. Parabéns!</div>}
       </QuizContainer>
     </QuizBackground>
   );
