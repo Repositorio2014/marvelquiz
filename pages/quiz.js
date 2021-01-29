@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-closing-tag-location */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/jsx-indent */
 /* eslint-disable linebreak-style */
 import React from 'react';
 import db from '../db.json';
@@ -21,22 +24,17 @@ function LoadinWidget() {
   );
 }
 
-export default function QuizPage() {
-  console.log('Perguntas criadas: ', db.questions);
-  const question = db.questions[0];
-
+function QuestionWidget({
+  question,
+  questionIndex,
+  totalQuestions,
+}) {
   return (
-    <QuizBackground backgruondImage={db.bg}>
-      <QuizContainer>
-        <QuizLogo />
-        <Widget>
-          <Widget.Header>
+    <Widget>
+      <Widget.Header>
             {/* <BackLinkArrow href="/" /> */}
             <h3>
-              Pergunta
-              1
-              de
-              {` ${db.questions.length} `}
+              {`Pergunta ${questionIndex + 1} de ${totalQuestions}`}
             </h3>
           </Widget.Header>
 
@@ -62,7 +60,25 @@ export default function QuizPage() {
             </Button>
           </Widget.Content>
         </Widget>
+  );
+}
 
+export default function QuizPage() {
+  console.log('Perguntas criadas: ', db.questions);
+  const totalQuestions = db.questions.length;
+  const questionIndex = 1;
+  const question = db.questions[questionIndex];
+
+  return (
+    <QuizBackground backgruondImage={db.bg}>
+      <QuizContainer>
+        <QuizLogo />
+
+          <QuestionWidget
+            question={question}
+            questionIndex={questionIndex}
+            totalQuestion={totalQuestions}
+          />
         <LoadinWidget />
       </QuizContainer>
     </QuizBackground>
