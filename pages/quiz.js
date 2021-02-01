@@ -30,7 +30,9 @@ function QuestionWidget({
   totalQuestion,
   onSubmit,
 }) {
+  const [selectedAlternative, setSelectedAlternative] = React.useState(undefined);
   const questionId = `question__${questionIndex}`;
+  const isCorrect = selectedAlternative === question.answer;
   return (
     <Widget>
       <Widget.Header>
@@ -64,17 +66,17 @@ function QuestionWidget({
               }}
             >
               {question.alternatives.map((alternative, alternativeIndex) => {
-                console.log('Para de reclamar um pouquinho só');
                 const alternativeId = `alternative__${alternativeIndex}`;
-
                 return (
                   <Widget.Topic
                     as="label"
+                    key={alternativeId}
                     htmlFor={alternativeId}
                   >
                     <input
                       id={alternativeId}
                       name={questionId}
+                      onChange={() => setSelectedAlternative(alternativeIndex)}
                       type="radio"
                     />
                     {alternative}
@@ -88,6 +90,9 @@ function QuestionWidget({
               <Button type="submit">
                 Confirmar
               </Button>
+              {isCorrect && <p>Você acertou!</p>}
+              {!isCorrect && <p>Você errou!</p>}
+
             </form>
 
           </Widget.Content>
@@ -117,7 +122,7 @@ export default function QuizPage() {
   function handleSubmitQuiz() {
     const nextQuestion = questionIndex + 1;
     if (nextQuestion < totalQuestion) {
-      setCurrentQuestion(questionIndex + 1);
+      setCurrentQuestion(nextQuestion);
     } else {
       setScreenState(screenStates.RESULT);
     }
